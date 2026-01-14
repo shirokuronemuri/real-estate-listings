@@ -1,19 +1,19 @@
 services:
-  nest_starter_app: # Edit
-    image: ${DOCKERHUB_USERNAME}/nest-starter:latest # Edit
-    container_name: nest_starter_app # Edit
+  real_estate_listings_app:
+    image: ${DOCKERHUB_USERNAME}/real-estate-listings:latest
+    container_name: real_estate_listings_app
     restart: always
     env_file:
       - .env.production
     ports:
       - "127.0.0.1:${PORT}:${PORT}"
     depends_on:
-      - nest_starter_postgres # Edit
-      - nest_starter_redis # Edit
+      - real_estate_listings_postgres
+      - real_estate_listings_redis
 
-  nest_starter_postgres: # Edit
+  real_estate_listings_postgres:
     image: postgres:alpine
-    container_name: nest_starter_postgres # Edit
+    container_name: real_estate_listings_postgres
     restart: always
     env_file:
       - .env.production
@@ -23,9 +23,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
   
-  nest_starter_redis: # Edit
+  real_estate_listings_redis:
     image: redis:alpine
-    container_name: nest_starter_redis # Edit
+    container_name: real_estate_listings_redis
     command: redis-server --requirepass ${REDIS_PASSWORD}
     restart: always
     volumes:
@@ -33,7 +33,7 @@ services:
 
 networks:
   default:
-    name: nest_starter # Edit
+    name: real_estate_listings
 
 volumes:
   postgres_data:

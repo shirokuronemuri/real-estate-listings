@@ -1,8 +1,8 @@
 {
-  "name": "nest-starter",
+  "name": "real-estate-listings",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "shirokuronemuri",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

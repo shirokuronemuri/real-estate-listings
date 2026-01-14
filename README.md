@@ -1,8 +1,8 @@
-# nest-starter
+# real-estate-listings
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework starter project. It includes test coverage, some middlewares, request body validation with zod, logging, prisma + postgres, redis caching and github actions for automated testing and deployment to a remote server.
+Real estate listings API built with Nest.
 
 ## Dev setup
 
@@ -32,8 +32,8 @@ $ pnpm start:dev
 
   ```bash
   # (windows env variable syntax is also supported)
-  $ DOCKERNAME_USERNAME=yourusername APP_NAME=nest-starter pnpm d:build:prod
-  $ DOCKERNAME_USERNAME=yourusername APP_NAME=nest-starter pnpm d:push:prod
+  $ DOCKERNAME_USERNAME=yourusername APP_NAME=real-estate-listings pnpm d:build:prod
+  $ DOCKERNAME_USERNAME=yourusername APP_NAME=real-estate-listings pnpm d:push:prod
   ```
 
   Then copy .env.production, package.json and docker-compose.prod.yml to your server and run the containers:
