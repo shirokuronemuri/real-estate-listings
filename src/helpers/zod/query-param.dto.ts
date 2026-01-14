@@ -1,10 +1,10 @@
 import { createZodDto } from 'nestjs-zod';
 import z from 'zod';
-import { positiveQueryInt } from './positive-query-int';
+import { positiveCoercedInt } from './positive-coerced-int';
 
 export const queryParamSchema = z.object({
-  page: positiveQueryInt.optional(),
-  limit: positiveQueryInt.optional(),
+  page: positiveCoercedInt.optional(),
+  limit: positiveCoercedInt.optional(),
   filter: z.string().trim().min(1).optional(),
 });
 
