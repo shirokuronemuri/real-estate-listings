@@ -6,7 +6,8 @@ import { DatabaseService } from 'src/services/database/database.service';
 export class ListingService {
   constructor(private readonly db: DatabaseService) {}
 
-  create(createListingDto: CreateListingDto) {
+  create(createListingDto: CreateListingDto, images: Express.Multer.File[]) {
+    console.log(images);
     return this.db.listing.create({
       data: createListingDto,
     });
