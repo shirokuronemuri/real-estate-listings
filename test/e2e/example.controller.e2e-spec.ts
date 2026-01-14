@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { server, app } from '../setup';
+import { server } from '../setup';
 
 describe('ExampleController (e2e)', () => {
   describe('POST /', () => {
