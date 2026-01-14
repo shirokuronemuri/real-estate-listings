@@ -12,6 +12,16 @@ export const envSchema = z.object({
   DATABASE_URL: z.url(),
   REDIS_URL: z.url(),
   HOST: z.preprocess(emptyToUndefined, z.url().optional()),
+
+  // Optional
+  LISTING_MAX_IMAGE_COUNT: z.preprocess(
+    emptyToUndefined,
+    z.coerce.number().optional(),
+  ),
+  LISTING_MAX_FILE_SIZE_MB: z.preprocess(
+    emptyToUndefined,
+    z.coerce.number().optional(),
+  ),
 });
 
 export type Env = z.infer<typeof envSchema>;
