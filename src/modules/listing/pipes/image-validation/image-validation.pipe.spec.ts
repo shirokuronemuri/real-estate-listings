@@ -29,6 +29,14 @@ describe('ImageValidationPipe', () => {
     expect(() => pipe.transform(files)).toThrow(ZodValidationException);
   });
 
+  it('throws ZodValidationException if mimetype is not supported image', () => {
+    const files = [
+      { mimetype: 'video/mp4', size: 100 },
+    ] as Express.Multer.File[];
+    config.get.mockReturnValueOnce(1024).mockReturnValueOnce(1);
+    expect(() => pipe.transform(files)).toThrow(ZodValidationException);
+  });
+
   it('throws ZodValidationException if image size is too big', () => {
     const files = [
       { mimetype: 'image/jpeg', size: 3 * 1024 * 1024 },
