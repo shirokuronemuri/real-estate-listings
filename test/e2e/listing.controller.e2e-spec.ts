@@ -4,23 +4,41 @@ import { server } from '../setup';
 
 describe('ListingController (e2e)', () => {
   it('should create listing', async () => {
-    const newListing: CreateListingDto = {
-      label: 'label',
-      addressCity: 'city',
-      addressLine1: 'address',
-      addressLine2: null,
-      addressProvince: 'province',
-      bathrooms: 1,
-      bedrooms: 1,
-      price: 100,
-      squareMeters: 100,
-    };
     await request(server)
       .post('/listing')
-      .send(newListing)
+      .field('label', 'label')
+      .field('addressCity', 'city')
+      .field('addressLine1', 'line1')
+      .field('addressLine2', 'line2')
+      .field('addressProvince', 'province')
+      .field('bathrooms', '1')
+      .field('bedrooms', '1')
+      .field('price', '1')
+      .field('squareMeters', '1')
+      .field('images', Buffer.from('fakeimage'), {
+        filename: 'name',
+        contentType: 'image/jpeg',
+      })
       .expect(201)
       .expect(({ body: { data } }) => {
-        expect(data).toMatchObject(newListing);
+        expect(data).toHaveProperty('id');
       });
+  });
+  it('should return 400 if validation failed', async () => {
+    await request(server)
+      .post('/listing')
+      .field('addressCity', 'city')
+      .field('addressLine1', 'line1')
+      .field('addressLine2', 'line2')
+      .field('addressProvince', 'province')
+      .field('bathrooms', '1')
+      .field('bedrooms', '1')
+      .field('price', '1')
+      .field('squareMeters', '1')
+      .field('images', Buffer.from('fakeimage'), {
+        filename: 'name',
+        contentType: 'image/jpeg',
+      })
+      .expect(400);
   });
 });

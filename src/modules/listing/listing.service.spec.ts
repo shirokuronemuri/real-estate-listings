@@ -36,6 +36,9 @@ describe('ListingService', () => {
       price: 100,
       squareMeters: 100,
     };
+    const images = [
+      { mimetype: 'image/jpeg', size: 1024 },
+    ] as Express.Multer.File[];
     const dbFields = {
       id: 1,
       createdAt: new Date(),
@@ -43,7 +46,7 @@ describe('ListingService', () => {
     };
     db.listing.create.mockResolvedValue({ ...newListing, ...dbFields });
 
-    const result = await listingService.create(newListing);
+    const result = await listingService.create(newListing, images);
     expect(result).toStrictEqual({ ...newListing, ...dbFields });
     expect(db.listing.create).toHaveBeenCalledTimes(1);
   });

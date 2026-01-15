@@ -25,7 +25,10 @@ describe('ListingService', () => {
         price: 100,
         squareMeters: 100,
       };
-      const result = await listingService.create(newListing);
+      const images = [
+        { mimetype: 'image/jpeg', size: 1024 },
+      ] as Express.Multer.File[];
+      const result = await listingService.create(newListing, images);
       const dbListing = await db.listing.findUnique({
         where: { id: result.id },
       });

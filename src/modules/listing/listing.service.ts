@@ -7,7 +7,6 @@ export class ListingService {
   constructor(private readonly db: DatabaseService) {}
 
   create(createListingDto: CreateListingDto, images: Express.Multer.File[]) {
-    console.log(images);
     return this.db.listing.create({
       data: createListingDto,
     });
