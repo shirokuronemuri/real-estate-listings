@@ -1,7 +1,8 @@
 export type ImageUploadJob = {
+  id: number;
   listingId: number;
   path: string;
-  filename: string;
+  storageKey: string;
   mimetype: string;
   retries: number;
 };

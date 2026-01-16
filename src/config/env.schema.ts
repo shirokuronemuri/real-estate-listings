@@ -30,6 +30,10 @@ export const envSchema = z.object({
     emptyToUndefined,
     z.coerce.number().optional(),
   ),
+  LISTING_MAX_UPLOAD_RETRIES: z.preprocess(
+    emptyToUndefined,
+    z.coerce.number().optional(),
+  ),
 });
 
 export type Env = z.infer<typeof envSchema>;

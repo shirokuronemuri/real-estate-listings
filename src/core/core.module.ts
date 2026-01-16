@@ -1,6 +1,7 @@
 import {
   Global,
   Module,
+  OnModuleInit,
   type MiddlewareConsumer,
   type NestModule,
 } from '@nestjs/common';
@@ -17,9 +18,10 @@ import { RedisProvider } from 'src/core/providers/redis.provider';
 import { RedisService } from 'src/services/redis/redis.service';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
-import { MulterModule } from '@nestjs/platform-express';
-import { R2Provider } from './providers/r2.provider';
+import { R2_CLIENT, R2Provider } from './providers/r2.provider';
 import { JsonService } from './services/json/json.service';
+import path from 'node:path';
+import { existsSync, mkdirSync } from 'node:fs';
 
 @Global()
 @Module({
@@ -27,9 +29,6 @@ import { JsonService } from './services/json/json.service';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],
-    }),
-    MulterModule.register({
-      dest: './upload',
     }),
     ThrottlerModule.forRootAsync({
       inject: [TypedConfigService],
@@ -78,9 +77,17 @@ import { JsonService } from './services/json/json.service';
     DatabaseService,
     RedisService,
     TypedConfigService,
+    R2_CLIENT,
   ],
 })
-export class CoreModule implements NestModule {
+export class CoreModule implements NestModule, OnModuleInit {
+  onModuleInit() {
+    const uploadPath = path.join(process.cwd(), 'upload');
+    if (!existsSync(uploadPath)) {
+      mkdirSync(uploadPath, { recursive: true });
+    }
+  }
+
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes('*');
   }

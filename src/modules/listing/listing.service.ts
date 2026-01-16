@@ -6,6 +6,7 @@ import { JsonService } from 'src/core/services/json/json.service';
 import { nanoid } from 'nanoid';
 import { extname } from 'node:path';
 import { ImageUploadJob } from './types';
+import { ImageStatus } from 'src/services/database/generated/prisma/enums';
 
 @Injectable()
 export class ListingService {
@@ -22,11 +23,34 @@ export class ListingService {
     const listing = await this.db.listing.create({
       data: createListingDto,
     });
+    const keyedImages = images.map((img) => ({
+      ...img,
+      storageKey: `uploads/listing/${img.filename}`,
+    }));
+    const dbImages = await this.db.listingImage.createManyAndReturn({
+      data: keyedImages.map((img) => ({
+        listingId: listing.id,
+        storageKey: img.storageKey,
+        mimetype: img.mimetype,
+        status: ImageStatus.PROCESSING,
+      })),
+    });
+    const dbImageMap = new Map(dbImages.map((img) => [img.storageKey, img.id]));
+    const keyedImagesWithId = keyedImages.map((img) => {
+      const id = dbImageMap.get(img.storageKey);
+      if (!id) {
+        throw new InternalServerErrorException(
+          'Failed to match image by storageKey',
+        );
+      }
+      return { ...img, id };
+    });
 
-    const uploadJobs: ImageUploadJob[] = images.map((img) => ({
+    const uploadJobs: ImageUploadJob[] = keyedImagesWithId.map((img, i) => ({
+      id: img.id,
       listingId: listing.id,
       path: img.path,
-      filename: `${nanoid(12)}${extname(img.path)}`,
+      storageKey: img.storageKey,
       mimetype: img.mimetype,
       retries: 0,
     }));

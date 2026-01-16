@@ -4,9 +4,6 @@ import {
   Body,
   UseInterceptors,
   UploadedFiles,
-  ParseFilePipe,
-  MaxFileSizeValidator,
-  FileTypeValidator,
 } from '@nestjs/common';
 import { ListingService } from './listing.service';
 import { CreateListingDto } from './dto/create-listing.dto';
@@ -16,6 +13,7 @@ import { normalizeResponse } from 'src/helpers/response/normalize-response';
 import { ListingDto } from './dto/listing.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ImageValidationPipe } from './pipes/image-validation/image-validation.pipe';
+import { unlink } from 'node:fs/promises';
 
 @Controller('listing')
 export class ListingController {

@@ -23,4 +23,5 @@ export const createImageUploadSchema = ({
         ),
       }),
     )
+    .min(1, 'You must upload at least one image')
     .max(maxImageCount, `You can't upload more than ${maxImageCount} images`);
