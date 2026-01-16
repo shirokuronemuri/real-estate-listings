@@ -13,7 +13,7 @@ datasource db {
 }
 
 model Listing {
-  id              Int      @id @default(autoincrement())
+  id              Int            @id @default(autoincrement())
   label           String
   addressLine1    String
   addressLine2    String?
@@ -23,6 +23,24 @@ model Listing {
   bathrooms       Int
   bedrooms        Int
   squareMeters    Int
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  images          ListingImage[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+enum ImageStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model ListingImage {
+  id         Int         @id @default(autoincrement())
+  storageKey String
+  mimetype   String
+  listing    Listing     @relation(fields: [listingId], references: [id])
+  listingId  Int
+  status     ImageStatus
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 }
