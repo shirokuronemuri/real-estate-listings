@@ -3,8 +3,6 @@ import { CreateListingDto } from './dto/create-listing.dto';
 import { DatabaseService } from 'src/services/database/database.service';
 import { RedisService } from 'src/services/redis/redis.service';
 import { JsonService } from 'src/core/services/json/json.service';
-import { nanoid } from 'nanoid';
-import { extname } from 'node:path';
 import { ImageUploadJob } from './types';
 import { ImageStatus } from 'src/services/database/generated/prisma/enums';
 
