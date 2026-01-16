@@ -13,10 +13,13 @@ import { LoggerService } from './services/logger/logger.service';
 import { LoggerMiddleware } from './middlewares/logger/logger.middleware';
 import { DatabaseService } from 'src/services/database/database.service';
 import { TypedConfigService } from 'src/config/typed-config.service';
-import { RedisProvider } from 'src/services/redis/redis.provider';
+import { RedisProvider } from 'src/core/providers/redis.provider';
 import { RedisService } from 'src/services/redis/redis.service';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
+import { MulterModule } from '@nestjs/platform-express';
+import { R2Provider } from './providers/r2.provider';
+import { JsonService } from './services/json/json.service';
 
 @Global()
 @Module({
@@ -24,6 +27,9 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],
+    }),
+    MulterModule.register({
+      dest: './upload',
     }),
     ThrottlerModule.forRootAsync({
       inject: [TypedConfigService],
@@ -59,12 +65,20 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
       useClass: HttpExceptionFilter,
     },
     LoggerService,
+    JsonService,
     DatabaseService,
     RedisProvider,
     RedisService,
+    R2Provider,
     TypedConfigService,
   ],
-  exports: [LoggerService, DatabaseService, RedisService, TypedConfigService],
+  exports: [
+    LoggerService,
+    JsonService,
+    DatabaseService,
+    RedisService,
+    TypedConfigService,
+  ],
 })
 export class CoreModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
