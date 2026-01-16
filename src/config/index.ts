@@ -1,6 +1,7 @@
 import { envSchema } from './env.schema';
 import { appConfig } from './app.config';
 import { listingConfig } from './listing.config';
+import { r2Config } from './r2.config';
 
 export type ConfigValues = ReturnType<typeof config>;
 
@@ -22,6 +23,7 @@ const config = () => {
       url: env.REDIS_URL,
     },
     listing: listingConfig(env),
+    r2: r2Config(env),
   };
 };
 

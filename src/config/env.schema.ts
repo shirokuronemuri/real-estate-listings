@@ -12,6 +12,10 @@ export const envSchema = z.object({
   DATABASE_URL: z.url(),
   REDIS_URL: z.url(),
   HOST: z.preprocess(emptyToUndefined, z.url().optional()),
+  R2_ENDPOINT: z.preprocess(emptyToUndefined, z.string()),
+  R2_BUCKET_NAME: z.preprocess(emptyToUndefined, z.string()),
+  R2_ACCESS_KEY_ID: z.preprocess(emptyToUndefined, z.string()),
+  R2_SECRET_ACCESS_KEY: z.preprocess(emptyToUndefined, z.string()),
 
   // Optional
   LISTING_MAX_IMAGE_COUNT: z.preprocess(
@@ -19,6 +23,10 @@ export const envSchema = z.object({
     z.coerce.number().optional(),
   ),
   LISTING_MAX_FILE_SIZE_MB: z.preprocess(
+    emptyToUndefined,
+    z.coerce.number().optional(),
+  ),
+  LISTING_MAX_CONCURRENT_UPLOAD_JOBS: z.preprocess(
     emptyToUndefined,
     z.coerce.number().optional(),
   ),
