@@ -2,11 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ListingService } from './listing.service';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { DatabaseService } from 'src/services/database/database.service';
-import { CreateListingDto } from './dto/create-listing.dto';
 import { RedisService } from 'src/services/redis/redis.service';
 import { JsonService } from 'src/core/services/json/json.service';
 import { ImageStatus } from 'src/services/database/generated/prisma/enums';
-import { ListingImage } from 'src/services/database/generated/prisma/client';
 import { InternalServerErrorException } from '@nestjs/common';
 
 describe('ListingService', () => {

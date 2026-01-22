@@ -11,6 +11,7 @@ import { ImageStatus } from 'src/services/database/generated/prisma/enums';
 export class ImageUploadQueueWorker implements OnModuleInit, OnModuleDestroy {
   private activeJobs = 0;
   private running = true;
+  private maxConcurrentJobs: number;
   constructor(
     private readonly config: TypedConfigService,
     private readonly redis: RedisService,
@@ -22,6 +23,7 @@ export class ImageUploadQueueWorker implements OnModuleInit, OnModuleDestroy {
   onModuleInit() {
     this.requeueActiveJobs();
     this.poll();
+    this.maxConcurrentJobs = this.config.get('listing.maxConcurrentUploadJobs');
   }
 
   onModuleDestroy() {
@@ -31,35 +33,37 @@ export class ImageUploadQueueWorker implements OnModuleInit, OnModuleDestroy {
   async requeueActiveJobs() {}
 
   async poll() {
-    const maxConcurrentJobs = this.config.get(
-      'listing.maxConcurrentUploadJobs',
-    );
     while (this.running) {
-      if (this.activeJobs >= maxConcurrentJobs) {
-        await this.sleep(100);
-        continue;
-      }
       try {
-        const jobRaw = await this.redis.client.rpoplpush(
-          'image:queue',
-          'image:processing',
-        );
-        const job = this.json.safeParse<ImageUploadJob>(jobRaw);
-
-        if (!jobRaw || !job) {
-          await this.sleep(1000);
-          continue;
-        }
-
-        this.activeJobs++;
-        this.processUpload(job, jobRaw).finally(() => {
-          this.activeJobs--;
-        });
+        await this.pollOnce();
       } catch (e) {
         if (!this.running) break;
         throw e;
       }
     }
+  }
+
+  async pollOnce() {
+    if (this.activeJobs >= this.maxConcurrentJobs) {
+      await this.sleep(100);
+      return;
+    }
+
+    const jobRaw = await this.redis.client.rpoplpush(
+      'image:queue',
+      'image:processing',
+    );
+    const job = this.json.safeParse<ImageUploadJob>(jobRaw);
+
+    if (!jobRaw || !job) {
+      await this.sleep(1000);
+      return;
+    }
+
+    this.activeJobs++;
+    this.processUpload(job, jobRaw).finally(() => {
+      this.activeJobs--;
+    });
   }
 
   async processUpload(job: ImageUploadJob, jobRaw: string) {
@@ -76,7 +80,7 @@ export class ImageUploadQueueWorker implements OnModuleInit, OnModuleDestroy {
         data: { status: ImageStatus.COMPLETED },
       });
       await this.redis.client.lrem('image:processing', 1, jobRaw);
-    } catch (e) {
+    } catch {
       const maxUploadRetries = this.config.get('listing.maxUploadRetries');
       if (job.retries < maxUploadRetries) {
         job.retries++;
