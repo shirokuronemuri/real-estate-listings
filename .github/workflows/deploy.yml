@@ -30,5 +30,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            export PNPM_HOME="/home/${{ secrets.VPS_USER }}/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
             cd /opt/server/${{ github.event.repository.name }}
-            docker compose --env-file .env.production -f docker-compose.prod.yml up -d --pull always
+            pnpm d:up:prod

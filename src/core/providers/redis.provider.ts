@@ -16,9 +16,11 @@ export const RedisProvider: Provider = {
       logger.log('Redis ready to accept commands', 'RedisProvider'),
     );
     client.on('error', (err) => {
+      if (client.status === 'end' || client.status === 'close') return;
+
       logger.error('Redis connection failed', err.stack, 'RedisProvider');
       if (config.get('app.environment') === 'test') {
-        process.exit(1);
+        setTimeout(() => process.exit(1), 100);
       }
     });
 

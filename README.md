@@ -6,7 +6,7 @@ Real estate listings API built with Nest.
 
 ## Dev setup
 
-Create `.env` file based on `.env.example`, then:
+Create `.env.production` file based on `.env.example`, then:
 
 ```bash
 $ pnpm install
@@ -26,9 +26,9 @@ $ pnpm start:dev
 1. Create `.env.production` file based on `.env.example`
 2. Change the dockerhub image name in `docker-compose.prod.yml` if needed
 
-4. choose one of two:
+3. choose one of two:
 
-- if deploying manually, run the following commands (you need to be logged into dockerhub): 
+- if deploying manually, run the following commands (you need to be logged into dockerhub):
 
   ```bash
   # (windows env variable syntax is also supported)
@@ -44,7 +44,7 @@ $ pnpm start:dev
 
 - if using github actions for build, modify deploy.yml for your needs, set the required repository secrets and run the workflow
 
-To stop production server run: 
+To stop production server run:
 
 ```bash
 $ pnpm d:down:prod

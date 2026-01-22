@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { TypedConfigService } from 'src/config/typed-config.service';
 import { JsonService } from 'src/core/services/json/json.service';
 import { RedisService } from 'src/services/redis/redis.service';
@@ -8,8 +8,9 @@ import { DatabaseService } from 'src/services/database/database.service';
 import { ImageStatus } from 'src/services/database/generated/prisma/enums';
 
 @Injectable()
-export class ImageUploadQueueWorker implements OnModuleInit {
+export class ImageUploadQueueWorker implements OnModuleInit, OnModuleDestroy {
   private activeJobs = 0;
+  private running = true;
   constructor(
     private readonly config: TypedConfigService,
     private readonly redis: RedisService,
@@ -23,33 +24,41 @@ export class ImageUploadQueueWorker implements OnModuleInit {
     this.poll();
   }
 
+  onModuleDestroy() {
+    this.running = false;
+  }
+
   async requeueActiveJobs() {}
 
   async poll() {
     const maxConcurrentJobs = this.config.get(
       'listing.maxConcurrentUploadJobs',
     );
-    while (true) {
+    while (this.running) {
       if (this.activeJobs >= maxConcurrentJobs) {
-        this.sleep(100);
+        await this.sleep(100);
         continue;
       }
+      try {
+        const jobRaw = await this.redis.client.rpoplpush(
+          'image:queue',
+          'image:processing',
+        );
+        const job = this.json.safeParse<ImageUploadJob>(jobRaw);
 
-      const jobRaw = await this.redis.client.rpoplpush(
-        'image:queue',
-        'image:processing',
-      );
-      const job = this.json.safeParse<ImageUploadJob>(jobRaw);
+        if (!jobRaw || !job) {
+          await this.sleep(1000);
+          continue;
+        }
 
-      if (!jobRaw || !job) {
-        this.sleep(1000);
-        continue;
+        this.activeJobs++;
+        this.processUpload(job, jobRaw).finally(() => {
+          this.activeJobs--;
+        });
+      } catch (e) {
+        if (!this.running) break;
+        throw e;
       }
-
-      this.activeJobs++;
-      this.processUpload(job, jobRaw).finally(() => {
-        this.activeJobs--;
-      });
     }
   }
 

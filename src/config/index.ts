@@ -10,6 +10,9 @@ const config = () => {
   if (!parsed.success) {
     console.error('Failed parsing environment variables:');
     console.error(JSON.stringify(parsed.error.issues, null, 2));
+    if (process.env.NODE_ENV === 'test') {
+      process.exit(1);
+    }
     throw new Error('Invalid environment configuration');
   }
   const env = parsed.data;

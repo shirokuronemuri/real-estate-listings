@@ -28,6 +28,7 @@ import { existsSync, mkdirSync } from 'node:fs';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: `.env.${process.env.NODE_ENV}`,
       load: [config],
     }),
     ThrottlerModule.forRootAsync({

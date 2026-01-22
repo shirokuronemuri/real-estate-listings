@@ -1,15 +1,18 @@
 import { CreateListingDto } from 'src/modules/listing/dto/create-listing.dto';
 import { ListingService } from 'src/modules/listing/listing.service';
 import { DatabaseService } from 'src/services/database/database.service';
+import { RedisService } from 'src/services/redis/redis.service';
 import { app } from 'test/setup';
 
 describe('ListingService', () => {
   let listingService: ListingService;
   let db: DatabaseService;
+  let redis: RedisService;
 
   beforeAll(() => {
     listingService = app.get(ListingService);
     db = app.get(DatabaseService);
+    redis = app.get(RedisService);
   });
 
   describe('create()', () => {
