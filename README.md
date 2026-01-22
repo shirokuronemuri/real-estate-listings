@@ -6,7 +6,7 @@ Real estate listings API built with Nest.
 
 ## Dev setup
 
-Create `.env.production` file based on `.env.example`, then:
+Create `.env.development` file based on `.env.example`, then:
 
 ```bash
 $ pnpm install
