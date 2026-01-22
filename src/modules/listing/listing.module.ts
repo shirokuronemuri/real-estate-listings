@@ -7,16 +7,20 @@ import { ImageUploadQueueWorker } from './workers/image-upload-queue.worker';
 import { ImageUploadService } from 'src/services/image-upload/image-upload.service';
 import { extname } from 'path';
 import { nanoid } from 'nanoid';
+import { TypedConfigService } from 'src/config/typed-config.service';
 
 @Module({
   imports: [
-    MulterModule.register({
-      storage: diskStorage({
-        destination: './upload',
-        filename: (_, file, cb) => {
-          const name = `${nanoid(12)}${extname(file.originalname)}`;
-          cb(null, name);
-        },
+    MulterModule.registerAsync({
+      inject: [TypedConfigService],
+      useFactory: (config: TypedConfigService) => ({
+        storage: diskStorage({
+          destination: config.get('listing.uploadDir'),
+          filename: (_, file, cb) => {
+            const name = `${nanoid(12)}${extname(file.originalname)}`;
+            cb(null, name);
+          },
+        }),
       }),
     }),
   ],

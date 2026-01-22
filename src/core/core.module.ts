@@ -82,8 +82,12 @@ import { existsSync, mkdirSync } from 'node:fs';
   ],
 })
 export class CoreModule implements NestModule, OnModuleInit {
+  constructor(private readonly config: TypedConfigService) {}
   onModuleInit() {
-    const uploadPath = path.join(process.cwd(), 'upload');
+    const uploadPath = path.join(
+      process.cwd(),
+      this.config.get('listing.uploadDir'),
+    );
     if (!existsSync(uploadPath)) {
       mkdirSync(uploadPath, { recursive: true });
     }

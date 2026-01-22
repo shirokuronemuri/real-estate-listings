@@ -17,7 +17,7 @@ describe('ListingService', () => {
   let config: DeepMockProxy<TypedConfigService>;
   let uploadService: DeepMockProxy<ImageUploadService>;
 
-  let getExampleJob = (retries = 0): ImageUploadJob => ({
+  const getExampleJob = (retries = 0): ImageUploadJob => ({
     id: 1,
     listingId: 1,
     path: '/tmp/test.png',
@@ -155,12 +155,14 @@ describe('ListingService', () => {
   });
 
   describe('onModuleInit()', () => {
-    it('starts polling on module init', () => {
+    it('starts polling on module init', async () => {
+      jest.spyOn(worker, 'pollOnce').mockResolvedValue(undefined);
       const pollSpy = jest.spyOn(worker, 'poll');
       worker.onModuleInit();
       expect(pollSpy).toHaveBeenCalled();
 
       worker.onModuleDestroy();
+      await new Promise(process.nextTick);
     });
   });
 });

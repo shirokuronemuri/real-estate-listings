@@ -34,6 +34,7 @@ export const envSchema = z.object({
     emptyToUndefined,
     z.coerce.number().optional(),
   ),
+  LISTING_UPLOAD_DIR: z.preprocess(emptyToUndefined, z.string().optional()),
 });
 
 export type Env = z.infer<typeof envSchema>;

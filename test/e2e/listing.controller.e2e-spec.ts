@@ -16,7 +16,7 @@ describe('ListingController (e2e)', () => {
       .field('price', '1')
       .field('squareMeters', '1')
       .field('images', Buffer.from('fakeimage'), {
-        filename: 'name',
+        filename: 'test.png',
         contentType: 'image/jpeg',
       })
       .expect(201)
@@ -36,7 +36,7 @@ describe('ListingController (e2e)', () => {
       .field('price', '1')
       .field('squareMeters', '1')
       .field('images', Buffer.from('fakeimage'), {
-        filename: 'name',
+        filename: 'test.png',
         contentType: 'image/jpeg',
       })
       .expect(400);
